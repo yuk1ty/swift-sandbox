@@ -7,7 +7,7 @@ func fibonacci(n: Int) -> Int {
 }
 
 func fibonacci_with_guard(n: Int) -> Int {
-    guard n != 0, n != 1 else {
+    guard n > 1 else {
         return n
     }
     return fibonacci(n: n - 1) + fibonacci(n: n - 2)
