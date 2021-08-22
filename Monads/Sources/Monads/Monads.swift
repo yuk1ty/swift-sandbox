@@ -16,7 +16,6 @@ extension List: Equatable {
     }
 }
 
-
 extension List {
     var isEmpty: Bool {
         return self == .`nil`
@@ -83,31 +82,31 @@ extension List {
     }
     
     // Higher order functions
-    func foldr<U>(acc: U, f: (T, U) -> U) -> U {
+    func foldr<U>(acc: U, f: (T, U) throws -> U) rethrows -> U {
         switch self {
         case .`nil`:
             return acc
         case .cons(let h, let t):
-            return f(h, t.foldr(acc: acc, f: f))
+            return try f(h, t.foldr(acc: acc, f: f))
         }
     }
     
-    func map<U>(f: @escaping (T) -> U) -> List<U> {
-        return self.foldr(acc: List<U>.`nil`, f: { acc, list in
-            return List<U>.cons(head: f(acc), tail: list)
+    func map<U>(f: (T) throws -> U) rethrows -> List<U> {
+        return try self.foldr(acc: List<U>.`nil`, f: { acc, list in
+            return List<U>.cons(head: try f(acc), tail: list)
         })
     }
     
-    func flatMap<U>(f: @escaping (T) -> List<U>) -> List<U> {
-        return foldr(acc: List<U>.`nil`, f: { acc, list in
-            return f(acc).append(another: list)
+    func flatMap<U>(f: (T) throws -> List<U>) rethrows -> List<U> {
+        return try foldr(acc: List<U>.`nil`, f: { acc, list in
+            return try f(acc).append(another: list)
         })
     }
     
-    func filter(p: @escaping (T) -> Bool) -> List<T> {
+    func filter(p: (T) -> Bool) -> List<T> {
         return foldr(acc: List<T>.`nil`, f: { acc, list in
             if p(acc) {
-                return List<T>.cons(head: acc, tail: list)
+                return List.cons(head: acc, tail: list)
             }
             return list
         })
