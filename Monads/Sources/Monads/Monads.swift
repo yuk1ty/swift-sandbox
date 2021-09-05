@@ -17,6 +17,21 @@ extension List: Equatable {
 }
 
 extension List {
+    init(_ source: T) {
+        self.init(source: source)
+    }
+    
+    private init<S>(source: S) where S: RandomAccessCollection, S.Element == T {
+        if source.isEmpty {
+            self = .`nil`
+        } else {
+            self = .cons(
+                head: source.first!,
+                tail: List(source: source.dropFirst())
+            )
+        }
+    }
+    
     var isEmpty: Bool {
         return self == .`nil`
     }
